@@ -1,0 +1,79 @@
+<div class="game-container">
+  <h1>Paper, Rock , Scissors</h1>
+
+  <div *ngIf="!game">
+    <div class="input-section">
+      <label for="player1">Player 1:</label>
+      <input type="text" id="player1" [(ngModel)]="player1" placeholder="Enter the player1's name">
+    </div>
+    <br>
+    <div class="input-section">
+      <label for="player2">Player 2:</label>
+      <input type="text" id="player2" [(ngModel)]="player2" placeholder="Enter the player2's name">
+    </div>
+    <br>
+    <button (click)="startGame()" [disabled]="!player1 || !player2">Start Game</button>
+  </div>
+
+  <div *ngIf="game">
+    <h2>Game in progress: {{ game.player1 }} vs {{ game.player2 }}</h2>
+    <p class="round-info">Score</p>
+    <p class="center-text">Player 1: {{ game.player1 }} - Score: {{ game.player1Score }}</p>
+    <p class="center-text">Player 2: {{ game.player2 }} - Score: {{ game.player2Score }}</p>
+    <br>
+    <p class="round-info">Round {{ game.round + 1 }} of {{ number_of_rounds }}</p>
+
+    <div class="game-actions">
+      <div *ngIf="game.round <= number_of_rounds">
+        <label for="player1Choice">Player 1 chooses: </label>
+        
+        <div class="player-choice">
+          <div *ngFor="let object of elements">
+            <button class="choosees-button" [disabled]="game.finished || (game.player1Score >= rounds_to_win || game.player2Score >= rounds_to_win) || (game.player1Choice && !game.player2Choice) || (game.player1Choice && game.player2Choice)" (click)="selectPlayer1Choice(object)">
+              {{ object }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="game.round <= number_of_rounds">
+        <label for="player2Choice">Player 2 chooses: </label>
+        
+        <div class="player-choice">
+          <div *ngFor="let object of elements">
+            <button class="choosees-button" [disabled]="(!game.player1Choice || game.player2Choice)" (click)="selectPlayer2Choice(object)">
+              {{ object }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div *ngIf="game.player1Choice && game.player2Choice && game.round <= number_of_rounds">
+      <button [disabled]="game.finished" (click)="playRound()">Start Round</button>
+    </div>
+
+    <div *ngIf="game.finished" class="game-over">
+      <h3>We have the WINNER(S)!</h3>
+      <p>Result: {{ game.result }}</p>
+      <p>Player 1: {{ game.player1Score }} points</p>
+      <p>Player 2: {{ game.player2Score }} points</p>
+
+      
+      <div *ngIf="game.player1Score > game.player2Score" class="winner">
+        <p><strong>{{ game.player1 }} is the new EMPEROR!</strong></p>
+      </div>
+      <div *ngIf="game.player2Score > game.player1Score" class="winner">
+        <p><strong>{{ game.player2 }} is the new EMPEROR!</strong></p>
+      </div>
+      <div *ngIf="game.player1Score === game.player2Score" class="tie">
+        <p><strong>The Game ended tied!</strong></p>
+      </div> 
+<br>
+      <button (click)="resetGame()">Play Again</button>
+    </div>
+
+  </div>
+
+</div>
