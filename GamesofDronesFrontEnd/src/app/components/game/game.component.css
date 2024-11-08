@@ -194,3 +194,63 @@ input {
     justify-content: center;  
     align-items: center;      
   }
+
+  .player1-button {   background-color: #00cdff;   color: white; } .player2-button {   background-color: #f24927; color: white; }
+  .game-content {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .game-left {
+    flex: 1;
+  }
+  
+  .game-right {
+    flex: 0.4; 
+    margin-left: 20px;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 300px; 
+    overflow-y: auto; 
+  }
+  
+  
+  .game-right h3 {
+    font-size: 1.5rem;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  .game-right ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .game-right .round-result-item {
+    background-color: #fff;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+    color: #555;
+    transition: background-color 0.3s, transform 0.3s;
+  }
+  
+  .game-right .round-result-item:hover {
+    background-color: #e1f7e3; 
+    transform: scale(1.05);
+  }
+  
+  .game-right .round-result-item:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+  
+  
+  
+  
+
+  

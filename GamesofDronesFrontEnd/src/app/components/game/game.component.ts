@@ -19,12 +19,13 @@ export class GameComponent {
   elements: string[] = [];
   rules: any = null;
 
+  roundResults: string[] = []; 
+
   constructor(private gamesService: GamesService) {}
 
   ngOnInit() { 
     this.number_of_rounds = this.gamesService.get_Number_of_rounds();
     this.rounds_to_win = this.gamesService.get_Rounds_to_win();
-    console.log(`Player ${this.number_of_rounds} rounds`);  
     console.log(`The player must win ${this.rounds_to_win} rounds`);  
 
     this.elements = this.gamesService.get_Elements();
@@ -35,6 +36,7 @@ startGame(): void {
   console.log('Applying startGame function');
   if (this.player1 && this.player2) {
     this.game = this.gamesService.startGame2(this.player1, this.player2);
+
     console.log('Game started:', this.game);  
   } else {
     console.error('Please enter the names of both players.');
@@ -42,45 +44,44 @@ startGame(): void {
 }
 
 playRound(): void {
-  this.game.round += 1;
   console.log('Applying playRound function ' + this.game.round);
-  console.log(`Variables: ${this.game.finished} - ${this.game.player1Score} - ${this.game.player2Score} - ${this.game.player1Choice} - ${this.game.player2Choice}`);  
-
+ 
   if (this.game.round <= this.number_of_rounds) {   
-    console.log('Select playerChoices ' + this.game?.player1Choice + ' and ' + this.game?.player2Choice);
     if (this.game && this.game?.player1Choice && this.game?.player2Choice) {
-      this.applyRound();
-
+      const roundResult = this.applyRound();
+      
+      if (roundResult !== 'Draw') {
+        this.game.round += 1; 
+      }
+ 
       this.game.player1Choice = '';
       this.game.player2Choice = '';
     } else {
-    console.error('Both players must make their choice before continuing.');
+      console.error('Both players must make their choice before continuing.');
     }
-  } 
-  else {
-    console.log('The estimated number of rounds has already been exceeded: ' + this.game.round); 
   }
-
-  if (this.game.round == this.number_of_rounds || this.game.player1Score == this.rounds_to_win || this.game.player2Score == this.rounds_to_win) {   
-    console.log('The rounds are over!');
+ 
+  if (this.game.player1Score === this.rounds_to_win || this.game.player2Score === this.rounds_to_win) {   
+    console.log('One player reached the points, game over!');
     this.finalizeGame();
     this.game.finished = true;
-  } 
+  }
 }
 
-applyRound(): void {
+applyRound(): string {
   console.log('Applying applyRound function');
+  let result = '';
   if (this.game) {
-    const result = this.evaluateRound(this.game.player1Choice, this.game.player2Choice);
-    
+    result = this.evaluateRound(this.game.player1Choice, this.game.player2Choice);
     if (result === 'player 1 wins') {
       this.game.player1Score += 1;
     } else if (result === 'player 2 wins') {
       this.game.player2Score += 1;
     }
-
-    console.log(`Round result: ${result}`);
   }
+  
+  this.roundResults.push(`Round ${this.game.round + 1 } Winner: ${result === 'Draw' ? 'No one (Draw)' : result === 'player 1 wins' ? this.game.player1 : this.game.player2}`);
+  return result;
 }
 
 evaluateRound(player1Choice: string, player2Choice: string): string {
@@ -93,9 +94,9 @@ evaluateRound(player1Choice: string, player2Choice: string): string {
   } else if (this.rules[player2Choice] && this.rules[player2Choice].includes(player1Choice)) {
     return 'player 2 wins';
   }
-    else {
-      return 'tied players';
-    }
+  else {
+    return 'Draw';
+  }
 }
 
 finalizeGame(): void {
@@ -122,26 +123,39 @@ finalizeGame(): void {
   }
 }
 
-selectPlayer1Choice(choice: string) {
-    if (this.game && this.game.round <= this.number_of_rounds && !this.game.player1Choice) {
+selectPlayerChoice(player: number, choice: string) {
+  if (this.game && this.game.round <= this.number_of_rounds) {
+    if (player === 1 && !this.game.player1Choice) {
       this.game.player1Choice = choice;
       console.log(`Player 1 chose: ${choice}`);
-    }
-  }
-
-  selectPlayer2Choice(choice: string) {
-    if (this.game && this.game.round <= this.number_of_rounds && !this.game.player2Choice) {
+    } else if (player === 2 && !this.game.player2Choice) {
       this.game.player2Choice = choice;
       console.log(`Player 2 chose: ${choice}`);
     }
   }
+}
 
   resetGame(): void {
     this.game = null;
+    this.finished = false;
+    this.roundResults = [];  
+    
+    this.game = this.gamesService.startGame2(this.player1, this.player2);
+    console.log('New game started:', this.game);
+  }
+
+  resetGameWithNewPlayers(): void {
+    this.game = null;  
+    this.finished = false;
+    this.roundResults = [];  
+
     this.player1 = '';
     this.player2 = '';
-    this.finished = false;
+
+    // Iniciar un nuevo juego
+    console.log('New game with new players started:');
   }
+  
 }
 
  
