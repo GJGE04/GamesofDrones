@@ -248,6 +248,10 @@ input {
   .game-right .round-result-item:nth-child(odd) {
     background-color: #f9f9f9;
   }
+
+  .button-spacing {
+    margin-right: 10px; /* Espacio entre los botones */
+  }
   
   
   
